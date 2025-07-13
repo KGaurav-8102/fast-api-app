@@ -17,6 +17,10 @@ class Student(BaseModel):
     subject: List[str] = []
 
 
+@app.get("/login/", response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse("login.html", { "request": request })
+
 @app.post("/students")
 async def student_data(name:str=Body(...), marks:int=Body(...)):
     return { "name": name, "marks": marks}
