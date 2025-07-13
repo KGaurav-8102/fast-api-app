@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Path, Body, Request
+from fastapi import FastAPI, Path, Body, Request, Form
 from typing import List
 from pydantic import BaseModel, Field
 from fastapi.responses import HTMLResponse
@@ -16,10 +16,18 @@ class Student(BaseModel):
     name : str = Field(None, title="name of student", max_length=10)
     subject: List[str] = []
 
+class User(BaseModel):
+    username: str
+    password: str
+
 
 @app.get("/login/", response_class=HTMLResponse)
 async def login(request: Request):
     return templates.TemplateResponse("login.html", { "request": request })
+
+@app.post("/submit/", response_model=User)
+async def submit(nm: str = Form(...), pwd: str = Form(...)):
+    return User(username=nm, password=pwd)
 
 @app.post("/students")
 async def student_data(name:str=Body(...), marks:int=Body(...)):
