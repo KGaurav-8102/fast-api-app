@@ -5,15 +5,20 @@ from pydantic import BaseModel, Field
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from books.router import book_router
 
 
 app = FastAPI()
 
-app.include_router(book_router)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+data = []
+class Book(BaseModel):
+   id: int
+   title: str
+   author: str
+   publisher: str
 
 class Student(BaseModel):
     id : int
@@ -25,6 +30,29 @@ class User(BaseModel):
     password: str
 
 
+@app.post("/book")
+def add_book(book: Book):
+   data.append(book.dict())
+   return data
+
+@app.get("/list")
+def get_books():
+   return data
+
+@app.get("/book/{id}")
+def get_book(id: int):
+   id = id - 1
+   return data[id]
+
+@app.put("/book/{id}")
+def add_book(id: int, book: Book):
+   data[id-1] = book
+   return data
+
+@app.delete("/book/{id}")
+def delete_book(id: int):
+   data.pop(id-1)
+   return data
 
 @app.post("/cookie/")
 def create_cookie():
