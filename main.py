@@ -5,8 +5,12 @@ from pydantic import BaseModel, Field
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from books.router import book_router
+
 
 app = FastAPI()
+
+app.include_router(book_router)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
